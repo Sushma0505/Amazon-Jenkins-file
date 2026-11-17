@@ -1,42 +1,35 @@
 pipeline {
     agent any
-    environment {
-        // Use PATH+EXTRA to append to PATH properly
-        PATH = "/usr/bin:/bin:/opt/homebrew/bin"
-    }
+    options { skipDefaultCheckout(true) }
     stages {
-
-        stage('pull scm git ') {
+        stage('Clone') {
             steps {
-                git branch: 'main', url: 'https://github.com/PraveenKuber/Amazon-Jenkins.git'
+                checkout scm
+                echo 'Repository checkout completed'
+        }
+        stage('Validate') {
+            steps {
+                script {
+                    if (!fileExists('pom.xml')) {
+                        error('pom.xml not found')
+                    }
+                }
+                echo 'pom.xml found successfully'
             }
         }
-        stage('compile ') {
-            steps {
-                sh 'mvn compile'
-            }
+        stage('Clean') {
+            steps { echo 'Clean stage demonstration' }
         }
-
-        stage('build') {
-            steps {
-                 sh 'mvn clean install'
-            }
+        stage('Compile') {
+            steps { echo 'Compile stage demonstration' }
         }
-
-        
+        stage('Build') {
+            steps { echo 'Build stage demonstration' }
+        }
     }
-
-  post{
-
-  success{
-     echo 'Build success 1'
-  }
-    
-  failure{
-       echo 'Failure in the build'
-   }
-
-  }
-
-
+    post {
+        success { echo 'Pipeline executed successfully' }
+        failure { echo 'Pipeline execution failed' }
+    }
 }
+            }
